@@ -4,7 +4,6 @@ activate 主叫端
 activate 服务器
 activate 被叫端
 activate webrtc
-
 主叫端->服务器:连接服务器
 被叫端->服务器:连接服务器
 主叫端->webrtc:getUserMedia()
