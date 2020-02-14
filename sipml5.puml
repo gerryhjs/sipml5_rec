@@ -1,0 +1,58 @@
+@startuml
+'autonumber
+activate 主叫端
+activate 服务器
+activate 被叫端
+activate webrtc
+
+主叫端->服务器:连接服务器
+被叫端->服务器:连接服务器
+主叫端->webrtc:getUserMedia()
+webrtc->主叫端:return UserMedia
+主叫端->主叫端:添加监听器回调
+主叫端->webrtc:创建PeerConnection
+webrtc->主叫端:return o_pc
+主叫端->webrtc:addStream(mediaStream)
+webrtc->主叫端:return success
+主叫端->webrtc:createOffer()
+webrtc->主叫端:return offer
+主叫端->webrtc:setLocalDescription(offer.sdp)
+webrtc->主叫端:return success
+主叫端->服务器:发送offer
+服务器->被叫端:广播发出的offer
+被叫端->webrtc:getUserMedia()
+webrtc->被叫端:return UserMedia
+被叫端->被叫端:添加监听器回调
+被叫端->webrtc:创建PeerConnection
+webrtc->被叫端:return o_pc
+被叫端->webrtc:addStream(mediaStream)
+webrtc->被叫端:return success
+被叫端->webrtc:iceCandidate协商开始
+loop iceCandidate协商
+...
+webrtc->被叫端:抛出IceCandidate事件
+被叫端->被叫端:触发onIceCandidate回调
+被叫端->服务器:发送Candidate信息
+服务器->主叫端:广播Candidate信息
+主叫端->webrtc:addCandidate()
+...
+webrtc->主叫端:抛出IceCandidate事件
+主叫端->主叫端:触发onIceCandidate回调
+主叫端->服务器:发送Candidate信息
+服务器->被叫端:广播Candidate信息
+被叫端->webrtc:addCandidate()
+...
+end
+webrtc->被叫端:所有的iceCandidate已发送
+被叫端->webrtc:setRemoteDescription(offer.sdp)
+webrtc->被叫端:return success
+被叫端->webrtc:createAnswer()
+webrtc->被叫端:return answer
+被叫端->webrtc:setLocalDescription(answer.sdp)
+webrtc->被叫端:return answer
+被叫端->服务器:发送answer
+服务器->主叫端:广播发出的answer
+主叫端->webrtc:setRemoteDescription(answer.sdp)
+webrtc->主叫端:return success
+主叫端<->被叫端:发送媒体流到对方的PeerConnection
+@enduml
