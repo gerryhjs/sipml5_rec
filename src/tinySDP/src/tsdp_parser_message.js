@@ -117,6 +117,26 @@ tsdp_machine_message_error = 0;
 tsdp_machine_message_en_main = 34;
 
 
+tsdp_message.prototype.get_header_o_addr = function() {
+
+	for(var i = 0; i < this.ao_headers.length; ++i){
+		if(this.ao_headers[i].e_type == tsdp_header_type_e.O && this.ao_headers[i].s_addr){
+			return this.ao_headers[i].s_addr;
+		}
+	}
+	return null;
+}
+
+tsdp_message.prototype.get_header_m_index = function(s_media) {
+
+	for(var i = 0; i < this.ao_headers.length; ++i){
+		if(this.ao_headers[i].e_type == tsdp_header_type_e.M && this.ao_headers[i].s_media == s_media){
+			return i;
+		}
+	}
+	return 0;
+}
+
 /* line 185 "./ragel/tsdp_parser_message.jrl" */
 
 tsdp_message.prototype.Parse = function(s_str){
